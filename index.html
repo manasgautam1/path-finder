@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body class="d-flex mt-5 justify-content-center align-items-center">
+    <div class="container">
+      <h1>Trip Fare Calculator</h1>
+      <form class="mb-5" action="/" method="POST">
+        <div class="form-group mb-3">
+          <label for="start" class="form-label">Current Location : </label>
+          <input
+            type="text"
+            name="start"
+            id="start"
+            placeholder="Enter current location"
+            class="form-control"
+          />
+        </div>
+        <div class="form-group mb-3">
+          <label for="end" class="form-label">Destination : </label>
+          <input
+            type="text"
+            name="end"
+            id="end"
+            placeholder="Enter destination"
+            class="form-control"
+          />
+        </div>
+        <div class="form-group">
+          <input
+            id="search-btn"
+            type="submit"
+            value="Search Price"
+            class="form-control btn btn-primary"
+          />
+        </div>
+      </form>
+      <div class="container mt-5">
+        <h1 class="text-center">Your Trip Fare</h1>
+        <hr />
+        <div id="output">
+          <h3>Calculated Distance : <span class="distance"></span></h3>
+          <h3>Calculated Duration : <span class="duration"></span></h3>
+          <h3>Calculated Price : <span class="price"></span></h3>
+        </div>
+      </div>
+      <div id="panel" class="my-5">
+        <div id="map"></div>
+        <div id="sidebar"></div>
+      </div>
+    </div>
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="./app.js"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClO_e2CHfSo1xDB-L4knP9SllTx_eORUQ&callback=initAutocomplete&libraries=places&v=weekly"
+      async
+    ></script>
+  </body>
+</html>
