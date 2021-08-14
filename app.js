@@ -48,14 +48,13 @@ function showAndRender() {
   const control = document.getElementById('floating-panel');
   map.controls[google.maps.ControlPosition.TOP_CENTER].push(control);
 
+  currentAddress = startAddress;
   calculateAndDisplayRoute(directionsService, directionsRenderer);
 }
 
 function getLocation(e) {
   e.preventDefault();
   const service = new google.maps.DistanceMatrixService();
-
-  showAndRender();
 
   const request = {
     origins: [startAddress],
@@ -73,6 +72,7 @@ function getLocation(e) {
       'Rs. ' +
       (response.rows[0].elements[0].distance.value / 1000).toFixed(2) * 20;
   });
+  showAndRender();
 }
 
 setInterval(() => {
@@ -90,20 +90,20 @@ setInterval(() => {
   if (endAddress.length > 0) {
     const directionsService = new google.maps.DirectionsService();
     const directionsRenderer = new google.maps.DirectionsRenderer();
-    // const map = new google.maps.Map(document.getElementById('map'), {
-    //   zoom: 7,
-    //   center: currentLongLat,
-    // });
-    // directionsRenderer.setMap(map);
+    const map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 7,
+      center: currentLongLat,
+    });
+    directionsRenderer.setMap(map);
 
     // directionsRenderer.setPanel(document.getElementById('sidebar'));
     // const control = document.getElementById('floating-panel');
-    // map.controls[google.maps.ControlPosition.TOP_CENTER].push(control);
+    // // map.controls[google.maps.ControlPosition.TOP_CENTER].push(control);
 
     currentAddress = '';
     calculateAndDisplayRoute(directionsService, directionsRenderer);
   }
-}, 1000);
+}, 5000);
 
 async function initAutocomplete() {
   const map = new google.maps.Map(document.getElementById('map'), {
