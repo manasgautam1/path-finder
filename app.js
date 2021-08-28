@@ -1,6 +1,7 @@
 const searchBtn = document.querySelector('#search-btn');
 const currentLoc = document.querySelector('#start');
 const destinationLoc = document.querySelector('#end');
+const redirectBtn = document.querySelector('#redirect-btn');
 
 const outputDist = document.querySelector('#output .distance');
 const outputDur = document.querySelector('#output .duration');
@@ -13,18 +14,37 @@ let startAddress,
   endAddress = '',
   currentAddress;
 let startID, endID;
+let startLat, startLong, endLat, endLong;
 
 searchBtn.addEventListener('click', getLocation);
+redirectBtn.addEventListener('click', redirectSite);
+
+function redirectSite() {
+  window.open(
+    `http://maps.google.com/maps?saddr=${startLat},${startLong}&daddr=${endLat},${endLong}`,
+    '_blank'
+  );
+}
+
+function geocodeAddress(address) {
+  const geocoder = new google.maps.Geocoder();
+
+  geocoder
+    .geocode({ address: address })
+    .then(({ results }) => {
+      console.log(results[0].geometry.location);
+    })
+    .catch((e) =>
+      alert('Geocode was not successful for the following reason: ' + e)
+    );
+}
 
 function calculateAndDisplayRoute(directionsService, directionsRenderer) {
   directionsService
     .route({
-      origin:
-        currentAddress.length === 0
-          ? currentLongLat
-          : {
-              query: currentAddress,
-            },
+      origin: {
+        query: startAddress,
+      },
       destination: {
         query: endAddress,
       },
@@ -71,39 +91,38 @@ function getLocation(e) {
     outputPrice.innerHTML =
       'Rs. ' +
       (response.rows[0].elements[0].distance.value / 1000).toFixed(2) * 20;
+    console.log(
+      (response.rows[0].elements[0].distance.value / 1000).toFixed(2) * 20
+    );
   });
   showAndRender();
 }
 
-setInterval(() => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const pos = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      };
-      // console.log(pos);
-      currentLongLat = pos;
-    });
-  }
+// setInterval(() => {
+//   if (navigator.geolocation) {
+//     navigator.geolocation.getCurrentPosition((position) => {
+//       const pos = {
+//         lat: position.coords.latitude,
+//         lng: position.coords.longitude,
+//       };
+//       // console.log(pos);
+//       currentLongLat = pos;
+//     });
+//   }
 
-  if (endAddress.length > 0) {
-    const directionsService = new google.maps.DirectionsService();
-    const directionsRenderer = new google.maps.DirectionsRenderer();
-    const map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 7,
-      center: currentLongLat,
-    });
-    directionsRenderer.setMap(map);
+//   if (endAddress.length > 0) {
+//     const directionsService = new google.maps.DirectionsService();
+//     const directionsRenderer = new google.maps.DirectionsRenderer();
+//     const map = new google.maps.Map(document.getElementById('map'), {
+//       zoom: 7,
+//       center: currentLongLat,
+//     });
+//     directionsRenderer.setMap(map);
 
-    // directionsRenderer.setPanel(document.getElementById('sidebar'));
-    // const control = document.getElementById('floating-panel');
-    // // map.controls[google.maps.ControlPosition.TOP_CENTER].push(control);
-
-    currentAddress = '';
-    calculateAndDisplayRoute(directionsService, directionsRenderer);
-  }
-}, 5000);
+//     currentAddress = '';
+//     calculateAndDisplayRoute(directionsService, directionsRenderer);
+//   }
+// }, 5000);
 
 async function initAutocomplete() {
   const map = new google.maps.Map(document.getElementById('map'), {
@@ -121,8 +140,14 @@ async function initAutocomplete() {
     // console.log(places);
 
     startAddress = places[0].formatted_address;
+    // geocodeAddress(startAddress);
     startID = places[0].place_id;
     console.log(startAddress);
+    // console.log(places[0].geometry.location.lat());
+    startLat = places[0].geometry.location.lat();
+    startLong = places[0].geometry.location.lng();
+
+    console.log(startLat, startLong);
 
     if (places.length == 0) {
       return;
@@ -134,8 +159,14 @@ async function initAutocomplete() {
     // console.log(places);
 
     endAddress = places[0].formatted_address;
+    // geocodeAddress(endAddress);
+
     endID = places[0].place_id;
     console.log(endAddress);
+
+    endLat = places[0].geometry.location.lat();
+    endLong = places[0].geometry.location.lng();
+    console.log(endLat, endLong);
 
     if (places.length == 0) {
       return;
